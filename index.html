@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OverGrow — your Mac grows grass when you forget to look away</title>
+<meta name="description" content="OverGrow is a quiet macOS menu bar app. When you've been staring too long, grass grows along the edges of your desktop. Look away for twenty seconds and it fades back.">
+<style>
+  :root {
+    --paper: #f6f4ee;
+    --card: #fffdf8;
+    --ink: #2c2a24;
+    --soft: #6f6a5e;
+    --line: #e4e0d5;
+    --leaf: #4a7c3f;
+    --leaf-dark: #33582c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font: 16px/1.65 -apple-system, "Helvetica Neue", "PingFang SC", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, .brand { font-family: Georgia, "Times New Roman", serif; font-weight: 600; letter-spacing: -0.01em; }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+  header { padding: 22px 0; border-bottom: 1px solid var(--line); }
+  header .wrap { display: flex; align-items: baseline; justify-content: space-between; }
+  .brand { font-size: 22px; }
+  .brand span { color: var(--leaf); }
+  nav a { color: var(--soft); text-decoration: none; margin-left: 22px; font-size: 14.5px; }
+  nav a:hover { color: var(--ink); }
+  .hero { padding: 72px 0 40px; }
+  .hero h1 { font-size: 40px; line-height: 1.2; max-width: 640px; }
+  .hero p { margin-top: 18px; font-size: 18px; color: var(--soft); max-width: 560px; }
+  .cta { margin-top: 28px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+  .btn {
+    display: inline-block; padding: 11px 22px; border-radius: 10px;
+    background: var(--leaf); color: #fff; text-decoration: none; font-size: 15px; font-weight: 600;
+  }
+  .btn:hover { background: var(--leaf-dark); }
+  .note { font-size: 13px; color: var(--soft); }
+  .shot { margin: 44px 0 0; }
+  .shot img { width: 100%; display: block; border-radius: 14px; border: 1px solid var(--line); }
+  .shot figcaption { margin-top: 10px; font-size: 13px; color: var(--soft); text-align: center; }
+  section { padding: 56px 0; border-top: 1px solid var(--line); }
+  section h2 { font-size: 26px; margin-bottom: 8px; }
+  section > p.lede { color: var(--soft); max-width: 620px; margin-bottom: 28px; }
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .step { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
+  .step h3 { font-size: 17px; margin-bottom: 6px; }
+  .step p { font-size: 14.5px; color: var(--soft); }
+  .step .n { display: inline-block; width: 26px; height: 26px; border-radius: 50%; background: var(--leaf); color: #fff;
+             text-align: center; line-height: 26px; font-size: 13px; margin-bottom: 10px; font-family: -apple-system, sans-serif; }
+  .rules { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 8px; }
+  .rule { display: flex; gap: 10px; font-size: 15px; }
+  .rule b { color: var(--leaf-dark); }
+  .gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .world { background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  .world img { width: 100%; display: block; }
+  .world .cap { padding: 10px 14px; font-size: 14px; }
+  .world .cap b { display: block; }
+  .world .cap span { color: var(--soft); font-size: 13px; }
+  table { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  th, td { padding: 12px 16px; text-align: left; font-size: 14.5px; border-bottom: 1px solid var(--line); }
+  th { background: #efece3; font-family: -apple-system, sans-serif; font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--soft); }
+  tr:last-child td { border-bottom: none; }
+  .price { font-family: Georgia, serif; font-size: 20px; }
+  .free { color: var(--leaf-dark); }
+  dl.faq dt { font-weight: 600; margin-top: 18px; }
+  dl.faq dd { color: var(--soft); margin-top: 4px; }
+  .community { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 22px; margin-top: 8px; }
+  .community a { color: var(--leaf-dark); }
+  footer { padding: 30px 0 60px; color: var(--soft); font-size: 13.5px; }
+  footer a { color: var(--soft); }
+  @media (max-width: 720px) {
+    .steps, .gallery { grid-template-columns: 1fr; }
+    .rules { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 30px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="brand">Over<span>Grow</span></div>
+    <nav>
+      <a href="#how">How it works</a>
+      <a href="#worlds">Worlds</a>
+      <a href="#community">Community</a>
+      <a href="#buy">Buy</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="hero">
+    <h1>When you stare too long, your desktop quietly grows grass.</h1>
+    <p>OverGrow lives in your Mac's menu bar. Watch the screen for twenty minutes and grass, snow or flowers
+       creep in along the edges — never over your work. Look away for twenty seconds and it fades back.
+       That's the whole trick, and it works.</p>
+    <div class="cta">
+      <a class="btn" href="#" id="mas-link">Download on the Mac App Store</a>
+      <span class="note">macOS 13+ · Free to start · One-time upgrade</span>
+    </div>
+    <figure class="shot">
+      <img src="assets/desk-snow.png" alt="OverGrow: first snow settles along the bottom edge of a desktop">
+      <figcaption>First Snow — one of the built-in worlds. The centre of the screen always stays clear.</figcaption>
+    </figure>
+  </div>
+
+  <section id="how">
+    <h2>How it works</h2>
+    <p class="lede">The 20-20-20 rule says: every 20 minutes, look at something 20 feet away for 20 seconds.
+       Everyone knows it; nobody does it. OverGrow turns it into something you can see.</p>
+    <div class="steps">
+      <div class="step"><span class="n">1</span>
+        <h3>You work</h3>
+        <p>A quiet timer in the menu bar counts your screen time. No pop-ups, no nagging, nothing moves.</p>
+      </div>
+      <div class="step"><span class="n">2</span>
+        <h3>The edges grow</h3>
+        <p>Grass creeps in from the screen edges. The longer you stare, the wilder it gets — snow piles up, fireflies drift, a cat curls up in the corner.</p>
+      </div>
+      <div class="step"><span class="n">3</span>
+        <h3>You look away</h3>
+        <p>Take a real break and the wind clears the edges. A flower drops onto the shelf in your Garden — your day, measured in blooms.</p>
+      </div>
+    </div>
+    <div class="rules">
+      <div class="rule"><b>Never in the way.</b> Elements can occupy at most 12% of the screen edge — the centre is off-limits by design, not by settings.</div>
+      <div class="rule"><b>Zero permissions.</b> No accessibility access, no screen recording, no input monitoring. It counts time, that's all.</div>
+      <div class="rule"><b>Zero network.</b> No account, no analytics, no telemetry. Your data never leaves your Mac.</div>
+      <div class="rule"><b>Easy on the battery.</b> When the scene is still, OverGrow stops drawing entirely — zero redraws, zero GPU work.</div>
+    </div>
+  </section>
+
+  <section id="worlds">
+    <h2>Worlds</h2>
+    <p class="lede">Each world is a complete desktop scene — palette, weather, wildlife and rest screen all match.
+       Two come with the free version; the rest open with a one-time upgrade, and new ones arrive with each release.</p>
+    <div class="gallery">
+      <div class="world"><img src="assets/desk-sakura.png" alt="Sakura Morning world"><div class="cap"><b>Sakura Morning</b><span>Petals drift; the cat naps through them.</span></div></div>
+      <div class="world"><img src="assets/desk-cloud.png" alt="Cloud Dawn world"><div class="cap"><b>Cloud Dawn</b><span>Soft light from the edges; pollen in the air.</span></div></div>
+      <div class="world"><img src="assets/desk-dark.png" alt="Night Fireflies world"><div class="cap"><b>Night Fireflies</b><span>For dark desktops — fireflies only glow at the margins.</span></div></div>
+      <div class="world"><img src="assets/desk-wheat.png" alt="Wheat Dusk world"><div class="cap"><b>Wheat Dusk</b><span>A field at closing time.</span></div></div>
+      <div class="world"><img src="assets/desk-snow.png" alt="First Snow world"><div class="cap"><b>First Snow</b><span>Snow piles at your feet, not on your windows.</span></div></div>
+      <div class="world"><img src="assets/desk-cloud.png" alt="More worlds in the community gallery"><div class="cap"><b>…and community worlds</b><span>New scenes from the gallery, one double-click to import.</span></div></div>
+    </div>
+  </section>
+
+  <section id="community">
+    <h2>Made with the community</h2>
+    <p class="lede">Worlds are built in the open. Browse, install and submit themes on GitHub — no account needed to download, a GitHub account to post.</p>
+    <div class="community">
+      <p><b>Theme gallery &amp; forum:</b> <a href="https://github.com/overgrow-app/overgrow-themes/discussions" id="gh-link">github.com/overgrow-app/overgrow-themes</a></p>
+      <p style="margin-top:10px">Submit a world you made and, if it's picked for the gallery, you get permanent credit plus a free copy of OverGrow.
+         Install anything from the gallery by double-clicking its <code>.overgrowpack</code> file.</p>
+    </div>
+  </section>
+
+  <section id="buy">
+    <h2>Price</h2>
+    <p class="lede">The timer — the part that actually helps your eyes — is free forever, with no limits.</p>
+    <table>
+      <tr><th></th><th>Free</th><th>One-time upgrade</th></tr>
+      <tr><td>Break timer, stare tracking, Garden</td><td class="free">Everything included</td><td class="free">Everything included</td></tr>
+      <tr><td>Two built-in worlds</td><td class="free">Included</td><td class="free">Included</td></tr>
+      <tr><td>All built-in worlds &amp; future releases</td><td>5-minute preview each</td><td class="free">Unlocked</td></tr>
+      <tr><td>Low-profile mode (menu-bar only)</td><td>—</td><td class="free">Unlocked</td></tr>
+      <tr><td>Price</td><td class="price free">Free</td><td class="price">≈ €9.99 · one-time, not a subscription</td></tr>
+    </table>
+  </section>
+
+  <section id="faq">
+    <h2>Questions</h2>
+    <dl class="faq">
+      <dt>Will it cover what I'm working on?</dt>
+      <dd>No. A hard limit keeps every element within the outer 12% of the screen edges. The centre is always clear — it can't be configured otherwise.</dd>
+      <dt>Does it drain the battery?</dt>
+      <dd>It's built to be the quietest thing running. When the scene is still it stops drawing completely; on battery power the sway animation pauses automatically. You can force it off anytime in Settings → Rhythm.</dd>
+      <dt>Does it need any permissions?</dt>
+      <dd>None. It reads system idle time and the frontmost app's name — both available without accessibility or screen-recording access.</dd>
+      <dt>Does it send my data anywhere?</dt>
+      <dd>No. No account, no analytics, no network access at all.</dd>
+      <dt>Is this a medical product?</dt>
+      <dd>No. OverGrow is a break reminder. It doesn't diagnose, treat or prevent any eye condition — for that, see an eye doctor.</dd>
+    </dl>
+  </section>
+
+  <footer>
+    <div class="wrap" style="padding:0">
+      <p>OverGrow · made for people who stare. Contact: <a href="mailto:hello@overgrow.app" id="mail-link">hello@overgrow.app</a></p>
+      <p style="margin-top:6px">Privacy in one line: OverGrow collects nothing, connects to nothing, and stores everything on your Mac.</p>
+    </div>
+  </footer>
+</div>
+
+</body>
+</html>
