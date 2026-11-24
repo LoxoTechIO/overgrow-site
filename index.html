@@ -55,7 +55,7 @@
   .rules { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 8px; }
   .rule { display: flex; gap: 10px; font-size: 15px; }
   .rule b { color: var(--leaf-dark); }
-  .gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .world { background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
   .world img { width: 100%; display: block; }
   .world .cap { padding: 10px 14px; font-size: 14px; }
@@ -74,7 +74,7 @@
   footer { padding: 30px 0 60px; color: var(--soft); font-size: 13.5px; }
   footer a { color: var(--soft); }
   @media (max-width: 720px) {
-    .steps, .gallery { grid-template-columns: 1fr; }
+    .steps, .duo { grid-template-columns: 1fr; }
     .rules { grid-template-columns: 1fr; }
     .hero h1 { font-size: 30px; }
   }
@@ -97,16 +97,16 @@
 <div class="wrap">
   <div class="hero">
     <h1>When you stare too long, your desktop quietly grows grass.</h1>
-    <p>OverGrow lives in your Mac's menu bar. Watch the screen for twenty minutes and grass, snow or flowers
-       creep in along the edges — never over your work. Look away for twenty seconds and it fades back.
+    <p>OverGrow lives in your Mac's menu bar. Watch the screen for twenty minutes and grass
+       creeps in along the edges — never over your work. Look away for twenty seconds and it fades back.
        That's the whole trick, and it works.</p>
     <div class="cta">
-      <a class="btn" href="#" id="mas-link">Download on the Mac App Store</a>
-      <span class="note">macOS 13+ · Free to start · One-time upgrade</span>
+      <a class="btn" href="#buy" id="mas-link">Coming soon — launching on the Mac App Store</a>
+      <span class="note">macOS 13+ · Free to start · One-time upgrade, no subscription</span>
     </div>
     <figure class="shot">
-      <img src="assets/desk-snow.png" alt="OverGrow: first snow settles along the bottom edge of a desktop">
-      <figcaption>First Snow — one of the built-in worlds. The centre of the screen always stays clear.</figcaption>
+      <img src="assets/shot-edge.png" alt="OverGrow: grass creeps in along the bottom edge of an afternoon desktop">
+      <figcaption>Afternoon Windowsill — one of the two built-in worlds. The centre of the screen always stays clear.</figcaption>
     </figure>
   </div>
 
@@ -121,13 +121,17 @@
       </div>
       <div class="step"><span class="n">2</span>
         <h3>The edges grow</h3>
-        <p>Grass creeps in from the screen edges. The longer you stare, the wilder it gets — snow piles up, fireflies drift, a cat curls up in the corner.</p>
+        <p>Grass creeps in from the screen edges. The longer you stare, the further it spreads — sunlight dims on the windowsill, fireflies take over the frame at night.</p>
       </div>
       <div class="step"><span class="n">3</span>
         <h3>You look away</h3>
-        <p>Take a real break and the wind clears the edges. A flower drops onto the shelf in your Garden — your day, measured in blooms.</p>
+        <p>Twenty real seconds and the wind clears the edges. Skip it with ESC and you take on a debt: it grows back faster next time. Your week lands in the Garden — one page, no streaks to lose.</p>
       </div>
     </div>
+    <figure class="shot">
+      <img src="assets/shot-look-away.png" alt="OverGrow rest screen with a twenty-second countdown" style="max-width:640px;margin:36px auto 0">
+      <figcaption>Twenty seconds, actually away from the screen. Any keyboard or mouse input restarts the count — staring at the countdown doesn't work.</figcaption>
+    </figure>
     <div class="rules">
       <div class="rule"><b>Never in the way.</b> Elements can occupy at most 12% of the screen edge — the centre is off-limits by design, not by settings.</div>
       <div class="rule"><b>Zero permissions.</b> No accessibility access, no screen recording, no input monitoring. It counts time, that's all.</div>
@@ -139,14 +143,15 @@
   <section id="worlds">
     <h2>Worlds</h2>
     <p class="lede">Each world is a complete desktop scene — palette, weather, wildlife and rest screen all match.
-       Two come with the free version; the rest open with a one-time upgrade, and new ones arrive with each release.</p>
-    <div class="gallery">
-      <div class="world"><img src="assets/desk-sakura.png" alt="Sakura Morning world"><div class="cap"><b>Sakura Morning</b><span>Petals drift; the cat naps through them.</span></div></div>
-      <div class="world"><img src="assets/desk-cloud.png" alt="Cloud Dawn world"><div class="cap"><b>Cloud Dawn</b><span>Soft light from the edges; pollen in the air.</span></div></div>
-      <div class="world"><img src="assets/desk-dark.png" alt="Night Fireflies world"><div class="cap"><b>Night Fireflies</b><span>For dark desktops — fireflies only glow at the margins.</span></div></div>
-      <div class="world"><img src="assets/desk-wheat.png" alt="Wheat Dusk world"><div class="cap"><b>Wheat Dusk</b><span>A field at closing time.</span></div></div>
-      <div class="world"><img src="assets/desk-snow.png" alt="First Snow world"><div class="cap"><b>First Snow</b><span>Snow piles at your feet, not on your windows.</span></div></div>
-      <div class="world"><img src="assets/desk-cloud.png" alt="More worlds in the community gallery"><div class="cap"><b>…and community worlds</b><span>New scenes from the gallery, one double-click to import.</span></div></div>
+       Two come with the app, free. You can also grow your own with a <code>.overgrowpack</code>: a folder of
+       JSON and images, no code needed.</p>
+    <figure class="shot" style="margin-top:0">
+      <img src="assets/shot-two-worlds.png" alt="Afternoon Windowsill and Neon Drift, the two built-in worlds">
+      <figcaption>Two skies to grow under — Afternoon Windowsill by day, Neon Drift after midnight.</figcaption>
+    </figure>
+    <div class="duo" style="margin-top:16px">
+      <div class="world"><img src="assets/shot-settings.png" alt="OverGrow settings, World page with the two built-in packs"><div class="cap"><b>Two worlds included</b><span>Switch, tune and rest — both ship free, nothing is gated behind the timer.</span></div></div>
+      <div class="world"><img src="assets/shot-garden.png" alt="The Garden panel: weekly stats, harvest shelf and growth stages"><div class="cap"><b>The Garden</b><span>How long you stared, how often you looked away, how often you skipped — one page a week.</span></div></div>
     </div>
   </section>
 
@@ -161,15 +166,16 @@
   </section>
 
   <section id="buy">
-    <h2>Price</h2>
-    <p class="lede">The timer — the part that actually helps your eyes — is free forever, with no limits.</p>
+    <h2>Buy</h2>
+    <p class="lede">The timer — the part that actually helps your eyes — is free forever, with no limits.
+       Pro is one purchase, not a subscription.</p>
     <table>
-      <tr><th></th><th>Free</th><th>One-time upgrade</th></tr>
-      <tr><td>Break timer, stare tracking, Garden</td><td class="free">Everything included</td><td class="free">Everything included</td></tr>
-      <tr><td>Two built-in worlds</td><td class="free">Included</td><td class="free">Included</td></tr>
-      <tr><td>All built-in worlds &amp; future releases</td><td>5-minute preview each</td><td class="free">Unlocked</td></tr>
-      <tr><td>Low-profile mode (menu-bar only)</td><td>—</td><td class="free">Unlocked</td></tr>
-      <tr><td>Price</td><td class="price free">Free</td><td class="price">≈ €9.99 · one-time, not a subscription</td></tr>
+      <tr><th></th><th>Free</th><th>Pro · one-time</th></tr>
+      <tr><td>Break timer, stare tracking, weekly Garden page</td><td class="free">Included</td><td class="free">Included</td></tr>
+      <tr><td>Both official worlds (Windowsill &amp; Neon Drift)</td><td class="free">Included</td><td class="free">Included</td></tr>
+      <tr><td>Import your own worlds (<code>.overgrowpack</code>)</td><td>—</td><td class="free">Unlocked</td></tr>
+      <tr><td>Low-profile mode (spreading stays in the menu bar)</td><td>—</td><td class="free">Unlocked</td></tr>
+      <tr><td>Price</td><td class="price free">Free</td><td class="price">¥68 ≈ $9.99 · one-time, not a subscription</td></tr>
     </table>
   </section>
 
@@ -178,12 +184,14 @@
     <dl class="faq">
       <dt>Will it cover what I'm working on?</dt>
       <dd>No. A hard limit keeps every element within the outer 12% of the screen edges. The centre is always clear — it can't be configured otherwise.</dd>
+      <dt>What happens if I skip a break?</dt>
+      <dd>ESC lets you out, but the skip is recorded — the grass grows back faster, and the weekly Garden page shows it to you. Pressure you can see, guilt you can't.</dd>
       <dt>Does it drain the battery?</dt>
       <dd>It's built to be the quietest thing running. When the scene is still it stops drawing completely; on battery power the sway animation pauses automatically. You can force it off anytime in Settings → Rhythm.</dd>
       <dt>Does it need any permissions?</dt>
       <dd>None. It reads system idle time and the frontmost app's name — both available without accessibility or screen-recording access.</dd>
       <dt>Does it send my data anywhere?</dt>
-      <dd>No. No account, no analytics, no network access at all.</dd>
+      <dd>No. No account, no analytics, no network access at all. You can export your history as JSON whenever you like.</dd>
       <dt>Is this a medical product?</dt>
       <dd>No. OverGrow is a break reminder. It doesn't diagnose, treat or prevent any eye condition — for that, see an eye doctor.</dd>
     </dl>
@@ -191,7 +199,7 @@
 
   <footer>
     <div class="wrap" style="padding:0">
-      <p>OverGrow · made for people who stare. Contact: <a href="mailto:hello@overgrow.app" id="mail-link">hello@overgrow.app</a></p>
+      <p>OverGrow · made for people who stare. Contact: <a href="mailto:nil0919@qq.com" id="mail-link">nil0919@qq.com</a></p>
       <p style="margin-top:6px">Privacy in one line: OverGrow collects nothing, connects to nothing, and stores everything on your Mac.</p>
     </div>
   </footer>
