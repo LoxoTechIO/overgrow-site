@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Theme Studio — OverGrow</title>
+<meta name="description" content="Design an OverGrow world in your browser: pick colors, write the ritual copy, preview it live, and export a ready-to-install .overgrowpack. No code needed.">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+  :root {
+    --paper: #f6f4ee; --card: #fffdf8; --ink: #2c2a24; --soft: #6f6a5e;
+    --line: #e4e0d5; --leaf: #4a7c3f; --leaf-dark: #33582c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--paper); color: var(--ink);
+    font: 16px/1.65 -apple-system, "Helvetica Neue", "PingFang SC", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, .brand { font-family: Georgia, "Times New Roman", serif; font-weight: 600; letter-spacing: -0.01em; }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+  header { padding: 22px 0; border-bottom: 1px solid var(--line); }
+  header .wrap { display: flex; align-items: baseline; justify-content: space-between; }
+  .brand { font-size: 22px; }
+  .brand span { color: var(--leaf); }
+  .brand a { color: inherit; text-decoration: none; }
+  nav a { color: var(--soft); text-decoration: none; margin-left: 22px; font-size: 14.5px; }
+  nav a:hover { color: var(--ink); }
+  .hero { padding: 48px 0 12px; }
+  .hero h1 { font-size: 34px; }
+  .hero p { margin-top: 12px; font-size: 17px; color: var(--soft); max-width: 640px; }
+  .studio { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 24px; padding: 28px 0 56px; }
+  .panel { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
+  .panel h2 { font-size: 18px; margin-bottom: 14px; }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 13px; font-weight: 600; color: var(--soft);
+                 text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; }
+  .field input[type="text"], .field input[type="number"], .field select, .field textarea {
+    width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px;
+    background: #fff; font: inherit; font-size: 14.5px; color: var(--ink); }
+  .field textarea { resize: vertical; }
+  .field .hint { font-size: 12px; color: var(--soft); margin-top: 3px; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .colorline { display: flex; align-items: center; gap: 10px; }
+  .colorline input[type="color"] { width: 42px; height: 34px; padding: 0; border: 1px solid var(--line);
+                                   border-radius: 8px; background: #fff; cursor: pointer; }
+  .colorline input[type="text"] { flex: 1; }
+  .group { border-top: 1px dashed var(--line); margin-top: 18px; padding-top: 14px; }
+  .group h3 { font-size: 15px; margin-bottom: 10px; color: var(--leaf-dark); }
+  #preview-wrap { position: sticky; top: 16px; }
+  #preview { width: 100%; display: block; border-radius: 12px; border: 1px solid var(--line); background: #dfe7ee; }
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+  .btn { display: inline-block; padding: 10px 20px; border-radius: 10px; background: var(--leaf);
+         color: #fff; text-decoration: none; font-size: 14.5px; font-weight: 600; border: none;
+         cursor: pointer; font-family: inherit; }
+  .btn:hover { background: var(--leaf-dark); }
+  .btn.ghost { background: transparent; color: var(--leaf-dark); border: 1px solid var(--leaf); }
+  .btn.ghost:hover { background: var(--card); }
+  #warn { margin-top: 10px; font-size: 13px; color: #a3562b; min-height: 1em; }
+  details.jsonbox { margin-top: 16px; }
+  details.jsonbox pre { background: #2c2a24; color: #e8e4d8; border-radius: 10px; padding: 14px;
+                        font: 12px/1.5 "SF Mono", Menlo, monospace; overflow: auto; max-height: 300px; }
+  .tips { color: var(--soft); font-size: 14px; margin-top: 18px; }
+  .tips li { margin-top: 4px; margin-left: 20px; }
+  footer { padding: 30px 0 60px; color: var(--soft); font-size: 13.5px; border-top: 1px solid var(--line); }
+  footer a { color: var(--soft); }
+  @media (max-width: 860px) {
+    .studio { grid-template-columns: 1fr; }
+    #preview-wrap { position: static; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="brand"><a href="index.html">Over<span>Grow</span></a></div>
+    <nav>
+      <a href="index.html#how">How it works</a>
+      <a href="themes.html">Themes</a>
+      <a href="studio.html">Theme Studio</a>
+      <a href="index.html#buy">Buy</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="hero">
+    <h1>Theme Studio</h1>
+    <p>A world is just one <code>theme.json</code> — colors, a line of copy, a rest screen.
+       Fill the form, watch the preview, export a <code>.overgrowpack</code> and double-click it
+       in OverGrow. Everything happens in your browser; nothing is uploaded.</p>
+  </div>
+
+  <div class="studio">
+    <div class="panel">
+      <h2>Your world</h2>
+
+      <div class="row2">
+        <div class="field">
+          <label for="f-name">Name</label>
+          <input type="text" id="f-name" value="琥珀午后">
+        </div>
+        <div class="field">
+          <label for="f-id">Theme ID <span style="text-transform:none">(lowercase, with a dot)</span></label>
+          <input type="text" id="f-id" value="local.amber">
+        </div>
+      </div>
+      <div class="field">
+        <label for="f-subtitle">One-line mood (subtitle)</label>
+        <input type="text" id="f-subtitle" value="午后的光斜过来，草尖亮了一格">
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="f-author">Author</label>
+          <input type="text" id="f-author" value="your-github-name">
+        </div>
+        <div class="field">
+          <label for="f-symbol">Menu bar symbol</label>
+          <select id="f-symbol">
+            <option value="leaf" selected>leaf</option>
+            <option value="sparkles">sparkles</option>
+            <option value="drop">drop</option>
+            <option value="moon">moon</option>
+            <option value="sun.max">sun.max</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="group">
+        <h3>Colors</h3>
+        <div class="row2">
+          <div class="field">
+            <label for="f-accent">Accent (grass & UI)</label>
+            <div class="colorline">
+              <input type="color" id="c-accent" value="#9a5b22">
+              <input type="text" id="f-accent" value="9a5b22">
+            </div>
+            <p class="hint">Should stay readable on light backgrounds.</p>
+          </div>
+          <div class="field">
+            <label for="f-vignette">Vignette (edge shadow)</label>
+            <div class="colorline">
+              <input type="color" id="c-vignette" value="#3a2a18">
+              <input type="text" id="f-vignette" value="3a2a18">
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Rest-screen sky (top → bottom)</label>
+          <div class="row2">
+            <div class="colorline">
+              <input type="color" id="c-sky-top" value="#8a7a9e">
+              <input type="text" id="f-sky-top" value="8a7a9e">
+            </div>
+            <div class="colorline">
+              <input type="color" id="c-sky-bottom" value="#f0d9b5">
+              <input type="text" id="f-sky-bottom" value="f0d9b5">
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Ritual colors (two tones)</label>
+          <div class="row2">
+            <div class="colorline">
+              <input type="color" id="c-rit-a" value="#f2c27a">
+              <input type="text" id="f-rit-a" value="f2c27a">
+            </div>
+            <div class="colorline">
+              <input type="color" id="c-rit-b" value="#b8a07e">
+              <input type="text" id="f-rit-b" value="b8a07e">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="group">
+        <h3>Ritual & rest copy</h3>
+        <div class="field">
+          <label for="f-ritual-copy">Ritual line (plays when the grass recedes)</label>
+          <input type="text" id="f-ritual-copy" value="草退了，午后往深处去了一点">
+        </div>
+        <div class="field">
+          <label for="f-focus-copy">Rest-screen line (tells you to look away)</label>
+          <input type="text" id="f-focus-copy" value="抬头 · 让视线顺着草尖望向远处">
+        </div>
+        <div class="field">
+          <label for="f-done-copy">Rest-complete line</label>
+          <input type="text" id="f-done-copy" value="草退了，护眼园 +1 朵">
+        </div>
+        <div class="field">
+          <label for="f-horizon">Rest-screen horizon</label>
+          <select id="f-horizon">
+            <option value="mountain" selected>mountain</option>
+            <option value="plain">plain</option>
+          </select>
+          <p class="hint">The app currently ships the mountain horizon; more silhouettes may arrive later.</p>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label for="f-ritual-duration">Ritual duration (s)</label>
+            <input type="number" id="f-ritual-duration" value="2.4" min="1" max="6" step="0.2">
+          </div>
+          <div class="field">
+            <label for="f-rest-ambient">Rest ambient</label>
+            <select id="f-rest-ambient">
+              <option value="petal" selected>petal</option>
+              <option value="none">none</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn" id="btn-export" type="button">Export .overgrowpack</button>
+        <button class="btn ghost" id="btn-json" type="button">Download theme.json</button>
+        <button class="btn ghost" id="btn-import" type="button">Import theme.json…</button>
+        <input type="file" id="file-import" accept=".json,application/json" hidden>
+      </div>
+      <p id="warn"></p>
+
+      <details class="jsonbox">
+        <summary style="cursor:pointer;font-size:14px;color:var(--soft)">View theme.json</summary>
+        <pre id="json-out"></pre>
+      </details>
+
+      <ul class="tips">
+        <li>Keep the mood line short — it renders inside the ritual overlay.</li>
+        <li>The accent color also shows up in the Garden panel UI.</li>
+        <li>Finished? Open a pull request to the
+            <a href="https://github.com/LoxoTechIO/OverGrow-Theme" style="color:var(--leaf-dark)">theme repo</a>
+            and join the gallery.</li>
+      </ul>
+    </div>
+
+    <div id="preview-wrap">
+      <div class="panel">
+        <h2>Live preview</h2>
+        <svg id="preview" viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg" role="img"
+             aria-label="Theme preview: rest-screen sky with grass along the bottom edge">
+          <defs>
+            <linearGradient id="p-sky" x1="0" y1="0" x2="0" y2="1"></linearGradient>
+            <linearGradient id="p-grass" x1="0" y1="1" x2="0" y2="0"></linearGradient>
+          </defs>
+          <rect id="p-sky-rect" x="0" y="0" width="640" height="360" fill="url(#p-sky)"></rect>
+          <g id="p-horizon"></g>
+          <g id="p-grass-g"></g>
+          <g id="p-vignette"></g>
+          <g id="p-ritual">
+            <rect id="p-ritual-band" x="0" y="262" width="640" height="98" fill="rgba(0,0,0,0)"></rect>
+            <text id="p-ritual-text" x="320" y="318" text-anchor="middle" font-family="Georgia, serif"
+                  font-size="17" fill="#3a3a30"></text>
+          </g>
+        </svg>
+        <p class="hint" style="margin-top:8px">
+          Approximate preview of the rest screen (sky, horizon, grass) with the ritual line overlaid —
+          the app's in-scene lighting is richer.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="wrap" style="padding:0">
+      <p>OverGrow · made for people who stare. Contact: <a href="mailto:nil0919@qq.com">nil0919@qq.com</a></p>
+    </div>
+  </footer>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+// ---------- state ----------
+function hexOf(t, fallback) {
+  const v = ($(t).value || '').trim().replace(/^#/, '').toLowerCase();
+  return /^[0-9a-f]{6}$/.test(v) ? v : fallback;
+}
+function buildJSON() {
+  return {
+    format: 3,
+    id: $('f-id').value.trim() || 'local.theme',
+    name: $('f-name').value.trim() || '未命名',
+    subtitle: $('f-subtitle').value.trim(),
+    author: $('f-author').value.trim(),
+    version: '0.1.0',
+    baseScene: 'grass',
+    requires: ['slot', 'ritual', 'rest.scene', 'menuBar', 'tokens'],
+    budget: { maxActors: 2, maxAssetMB: 8 },
+    layers: [
+      { type: 'slot', slot: 'edge', element: 'blade', pile: 'grassTuft', ambient: 'firefly' },
+      { type: 'vignette', strength: 0.45 }
+    ],
+    actors: [], motions: [], assets: [],
+    menuBar: { symbol: $('f-symbol').value },
+    tokens: { accent: hexOf('f-accent', '4a7c3f') },
+    palette: { accent: hexOf('f-accent', '4a7c3f'), vignette: hexOf('f-vignette', '2c3e2a') },
+    ritual: {
+      kind: 'bloom',
+      copy: $('f-ritual-copy').value.trim(),
+      colors: [hexOf('f-rit-a', 'f2c27a'), hexOf('f-rit-b', 'b8a07e')],
+      duration: Math.min(6, Math.max(1, parseFloat($('f-ritual-duration').value) || 2.4)),
+      height: 0.26,
+      easing: 'outCubic',
+      anchor: 'bottomCenter',
+      respectsReducedMotion: true
+    },
+    rest: {
+      ambient: $('f-rest-ambient').value,
+      backdrop: [hexOf('f-sky-top', '8a7a9e'), hexOf('f-sky-bottom', 'f0d9b5')],
+      horizon: $('f-horizon').value,
+      focusCopy: $('f-focus-copy').value.trim(),
+      doneCopy: $('f-done-copy').value.trim()
+    },
+    accessibility: { reducedMotion: 'static' }
+  };
+}
+
+// ---------- preview ----------
+function luminance(hex) {
+  const n = parseInt(hex, 16);
+  const c = [n >> 16 & 255, n >> 8 & 255, n & 255].map(v => {
+    v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+  });
+  return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+}
+function shade(hex, f) {
+  const n = parseInt(hex, 16);
+  const r = Math.round(Math.min(255, ((n >> 16 & 255) * f)));
+  const g = Math.round(Math.min(255, ((n >> 8 & 255) * f)));
+  const b = Math.round(Math.min(255, (n & 255) * f));
+  return `#${(r << 16 | g << 8 | b).toString(16).padStart(6, '0')}`;
+}
+function updatePreview() {
+  const t = buildJSON();
+  const top = '#' + t.rest.backdrop[0], bottom = '#' + t.rest.backdrop[1];
+  const accent = '#' + t.tokens.accent, vig = '#' + t.palette.vignette;
+
+  document.getElementById('p-sky').innerHTML =
+    `<stop offset="0" stop-color="${top}"/><stop offset="1" stop-color="${bottom}"/>`;
+
+  // horizon silhouette
+  const hg = $('p-horizon');
+  if (t.rest.horizon === 'mountain') {
+    hg.innerHTML = `<path d="M0 258 L70 216 L130 252 L205 200 L285 254 L360 222 L440 256 L520 228 L600 254 L640 240 L640 360 L0 360 Z"
+      fill="${shade(t.rest.backdrop[0], 0.72)}" opacity="0.85"/>`;
+  } else {
+    hg.innerHTML = `<rect x="0" y="256" width="640" height="104" fill="${shade(t.rest.backdrop[0], 0.78)}" opacity="0.7"/>`;
+  }
+
+  // grass band: randomized blades in 3 tones, fixed seed for stable redraws
+  const g = $('p-grass-g');
+  let s = 7, rnd = () => (s = s * 16807 % 2147483647) / 2147483647;
+  let blades = '';
+  const tones = [accent, shade(t.tokens.accent, 0.8), shade(t.tokens.accent, 1.25)];
+  for (let x = 2; x < 640; x += 7) {
+    const h = 16 + rnd() * 26;
+    const tone = tones[Math.floor(rnd() * 3)];
+    const bend = (rnd() - 0.5) * 10;
+    blades += `<path d="M${x} 360 Q ${x + bend} ${360 - h * 0.6} ${x + bend * 1.8} ${360 - h}" stroke="${tone}" stroke-width="${1.4 + rnd() * 1.2}" fill="none" stroke-linecap="round"/>`;
+  }
+  g.innerHTML = blades;
+
+  // vignette: soft dark edges (gradient def added below)
+  $('p-vignette').innerHTML = `<rect x="0" y="0" width="640" height="360" fill="url(#p-vig)"/>`;
+  const defs = document.getElementById('preview').querySelector('defs');
+  let vigEl = defs.querySelector('#p-vig');
+  if (!vigEl) {
+    vigEl = document.createElementNS('http://www.w3.org/2000/svg', 'radialGradient');
+    vigEl.id = 'p-vig';
+    defs.appendChild(vigEl);
+  }
+  vigEl.innerHTML = `<stop offset="0.6" stop-color="${vig}" stop-opacity="0"/>
+                     <stop offset="1" stop-color="${vig}" stop-opacity="0.35"/>`;
+
+  // ritual overlay
+  $('p-ritual-band').setAttribute('fill', `#${t.ritual.colors[1]}` );
+  $('p-ritual-band').setAttribute('opacity', '0.25');
+  $('p-ritual-text').textContent = t.ritual.copy || '';
+  $('p-ritual-text').setAttribute('fill', shade(t.ritual.colors[0], 0.55));
+
+  // contrast warning (accent on light UI, like the app's validator)
+  const L = luminance(t.tokens.accent);
+  $('warn').textContent =
+    (L > 0.62 ? 'Accent is very light — it may be hard to read in the Garden panel. Consider a darker tone.'
+   : L < 0.06 ? 'Accent is nearly black — the menu bar icon may disappear on dark themes.'
+   : '');
+  $('json-out').textContent = JSON.stringify(t, null, 2);
+}
+
+// ---------- export ----------
+function slugOf() {
+  return ($('f-id').value.trim() || 'local.theme').replace(/[^a-z0-9.]/gi, '').replace(/\./g, '-') || 'my-theme';
+}
+function download(blob, name) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+$('btn-json').addEventListener('click', () => {
+  download(new Blob([JSON.stringify(buildJSON(), null, 2)], { type: 'application/json' }), 'theme.json');
+});
+$('btn-export').addEventListener('click', async () => {
+  const zip = new JSZip();
+  zip.file('theme.json', JSON.stringify(buildJSON(), null, 2));
+  zip.file('README.md',
+`# ${buildJSON().name}
+
+Made with the OverGrow Theme Studio.
+Import: double-click the .overgrowpack file with OverGrow installed.
+
+Format 3 · https://github.com/LoxoTechIO/OverGrow-Theme
+`);
+  const blob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE' });
+  download(blob, slugOf() + '.overgrowpack');
+});
+$('btn-import').addEventListener('click', () => $('file-import').click());
+$('file-import').addEventListener('change', async e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  let text;
+  if (f.name.endsWith('.overgrowpack')) {
+    const zip = await JSZip.loadAsync(await f.arrayBuffer());
+    text = await zip.file('theme.json').async('string');
+  } else {
+    text = await f.text();
+  }
+  const t = JSON.parse(text);
+  const put = (id, v) => { if (v != null) $(id).value = v; };
+  put('f-name', t.name); put('f-id', t.id); put('f-subtitle', t.subtitle); put('f-author', t.author);
+  put('f-accent', t.tokens?.accent); put('f-vignette', t.palette?.vignette);
+  put('f-sky-top', t.rest?.backdrop?.[0]); put('f-sky-bottom', t.rest?.backdrop?.[1]);
+  put('f-rit-a', t.ritual?.colors?.[0]); put('f-rit-b', t.ritual?.colors?.[1]);
+  put('f-ritual-copy', t.ritual?.copy); put('f-focus-copy', t.rest?.focusCopy);
+  put('f-done-copy', t.rest?.doneCopy);
+  if (t.ritual?.duration) put('f-ritual-duration', t.ritual.duration);
+  if (t.rest?.horizon) put('f-horizon', t.rest.horizon);
+  if (t.rest?.ambient) put('f-rest-ambient', t.rest.ambient);
+  if (t.menuBar?.symbol) {
+    const sel = $('f-symbol');
+    sel.value = t.menuBar.symbol;
+    if (sel.value !== t.menuBar.symbol) { sel.append(new Option(t.menuBar.symbol, t.menuBar.symbol, true, true)); }
+  }
+  syncColorInputs();
+  updatePreview();
+  e.target.value = '';
+});
+
+// keep hex text fields and color pickers in sync
+function syncColorInputs() {
+  [['f-accent','c-accent'], ['f-vignette','c-vignette'], ['f-sky-top','c-sky-top'],
+   ['f-sky-bottom','c-sky-bottom'], ['f-rit-a','c-rit-a'], ['f-rit-b','c-rit-b']]
+  .forEach(([t, c]) => {
+    const v = hexOf(t, null);
+    if (v) $(c).value = '#' + v;
+  });
+}
+['f-accent','f-vignette','f-sky-top','f-sky-bottom','f-rit-a','f-rit-b'].forEach(id =>
+  $(id).addEventListener('change', syncColorInputs));
+['c-accent','c-vignette','c-sky-top','c-sky-bottom','c-rit-a','c-rit-b'].forEach(id =>
+  $(id).addEventListener('input', () => { $('f-' + id.slice(2)).value = $(id).value.replace('#',''); }));
+$('preview').addEventListener('input', () => {});
+document.querySelectorAll('.panel input, .panel select, .panel textarea')
+  .forEach(el => el.addEventListener('input', updatePreview));
+
+updatePreview();
+</script>
+
+</body>
+</html>

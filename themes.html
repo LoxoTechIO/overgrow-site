@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Theme Gallery — OverGrow</title>
+<meta name="description" content="Browse community-made OverGrow worlds. Download a .overgrowpack, double-click it, and your desktop grows a new sky.">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+  :root {
+    --paper: #f6f4ee; --card: #fffdf8; --ink: #2c2a24; --soft: #6f6a5e;
+    --line: #e4e0d5; --leaf: #4a7c3f; --leaf-dark: #33582c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--paper); color: var(--ink);
+    font: 16px/1.65 -apple-system, "Helvetica Neue", "PingFang SC", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, .brand { font-family: Georgia, "Times New Roman", serif; font-weight: 600; letter-spacing: -0.01em; }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+  header { padding: 22px 0; border-bottom: 1px solid var(--line); }
+  header .wrap { display: flex; align-items: baseline; justify-content: space-between; }
+  .brand { font-size: 22px; }
+  .brand span { color: var(--leaf); }
+  .brand a { color: inherit; text-decoration: none; }
+  nav a { color: var(--soft); text-decoration: none; margin-left: 22px; font-size: 14.5px; }
+  nav a:hover { color: var(--ink); }
+  .hero { padding: 56px 0 8px; }
+  .hero h1 { font-size: 34px; }
+  .hero p { margin-top: 12px; font-size: 17px; color: var(--soft); max-width: 620px; }
+  .hero .cta { margin-top: 18px; display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+  .btn { display: inline-block; padding: 10px 20px; border-radius: 10px; background: var(--leaf);
+         color: #fff; text-decoration: none; font-size: 14.5px; font-weight: 600; }
+  .btn:hover { background: var(--leaf-dark); }
+  .btn.ghost { background: transparent; color: var(--leaf-dark); border: 1px solid var(--leaf); }
+  .btn.ghost:hover { background: var(--card); }
+  section { padding: 44px 0; }
+  section h2 { font-size: 24px; margin-bottom: 8px; }
+  section > p.lede { color: var(--soft); max-width: 620px; margin-bottom: 24px; }
+  #status { font-size: 14px; color: var(--soft); margin-bottom: 20px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .theme { background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden;
+           display: flex; flex-direction: column; }
+  .theme img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; background: #ece8dc; }
+  .theme img.missing { display: none; }
+  .theme .body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+  .theme h3 { font-size: 17px; }
+  .theme .sub { font-size: 13.5px; color: var(--soft); flex: 1; }
+  .theme .meta { font-size: 12px; color: var(--soft); display: flex; gap: 10px; flex-wrap: wrap; }
+  .theme .meta .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block;
+                      vertical-align: -1px; border: 1px solid rgba(0,0,0,.15); }
+  .theme .dl { margin-top: 12px; align-self: flex-start; padding: 7px 14px; border-radius: 8px;
+               background: var(--leaf); color: #fff; text-decoration: none; font-size: 13px; font-weight: 600; }
+  .theme .dl:hover { background: var(--leaf-dark); }
+  .howto { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 22px; }
+  .howto ol { margin: 10px 0 0 20px; }
+  .howto li { margin-top: 6px; font-size: 15px; }
+  .howto code { background: #efece3; padding: 1px 6px; border-radius: 5px; font-size: 13.5px; }
+  .submit { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 22px; }
+  .submit a { color: var(--leaf-dark); }
+  footer { padding: 30px 0 60px; color: var(--soft); font-size: 13.5px; border-top: 1px solid var(--line); }
+  footer a { color: var(--soft); }
+  @media (max-width: 860px) { .grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) {
+    .grid { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 27px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="brand"><a href="index.html">Over<span>Grow</span></a></div>
+    <nav>
+      <a href="index.html#how">How it works</a>
+      <a href="themes.html">Themes</a>
+      <a href="studio.html">Theme Studio</a>
+      <a href="index.html#buy">Buy</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="hero">
+    <h1>Theme Gallery</h1>
+    <p>Worlds made by the community. Each one is a <code>.overgrowpack</code> — a small file with a
+       complete desktop scene inside. Download it, double-click it, and OverGrow grows a new sky.</p>
+    <div class="cta">
+      <a class="btn" href="studio.html">Make your own in the browser</a>
+      <a class="btn ghost" href="https://github.com/LoxoTechIO/OverGrow-Theme">Theme repo on GitHub ↗</a>
+    </div>
+  </div>
+
+  <section>
+    <p id="status">Loading themes from the repository…</p>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section id="install">
+    <h2>How to install a theme</h2>
+    <div class="howto">
+      <ol>
+        <li>Download the <code>.overgrowpack</code> file.</li>
+        <li>Double-click it — OverGrow imports the world and opens Settings → World.</li>
+        <li>Pick the new world from the list and let it grow.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="submit">
+    <h2>Submit your world</h2>
+    <div class="submit">
+      <p>Made something with the <a href="studio.html">Theme Studio</a>? Open a pull request to the
+         theme repo and it shows up in this gallery automatically. If it gets picked, you get permanent
+         credit plus a free copy of OverGrow.</p>
+      <p style="margin-top:10px"><a href="https://github.com/LoxoTechIO/OverGrow-Theme/blob/main/CONTRIBUTING.md">Read the contributing guide ↗</a></p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap" style="padding:0">
+      <p>OverGrow · made for people who stare. Contact: <a href="mailto:nil0919@qq.com">nil0919@qq.com</a></p>
+    </div>
+  </footer>
+</div>
+
+<script>
+const REPO = 'LoxoTechIO/OverGrow-Theme';
+const BRANCH = 'main';
+const RAW = `https://raw.githubusercontent.com/${REPO}/${BRANCH}`;
+const CDN = `https://cdn.jsdelivr.net/gh/${REPO}@${BRANCH}`;
+
+// Fallback shown if the repo API can't be reached.
+const FALLBACK = [
+  { slug: 'dusk-meadow',  name: '暮草',  en: 'Dusk Meadow',   author: 'LoxoTechIO',
+    subtitle: '日落前的草尖被镀了一层金，风一过就低头', accent: '9a5b22' },
+  { slug: 'rain-eaves',   name: '雨檐',  en: 'Rain Eaves',    author: 'LoxoTechIO',
+    subtitle: '檐下听雨，草色被洗得发青', accent: '3f6f8a' },
+  { slug: 'mint-morning', name: '薄荷晨', en: 'Mint Morning',  author: 'LoxoTechIO',
+    subtitle: '清晨的凉意，薄荷色的光从边缘渗进来', accent: '2e7a55' }
+];
+
+const grid = document.getElementById('grid');
+const status = document.getElementById('status');
+
+function cardHTML(t, dlURL) {
+  const preview = `${RAW}/themes/previews/${t.slug}.png`;
+  return `
+  <article class="theme">
+    <img src="${preview}" alt="${t.name}" loading="lazy"
+         onerror="this.classList.add('missing')">
+    <div class="body">
+      <h3>${t.name}${t.en ? ' · ' + t.en : ''}</h3>
+      <p class="sub">${t.subtitle || ''}</p>
+      <p class="meta">
+        <span class="dot" style="background:#${(t.accent || '4a7c3f').replace('#','')}"></span>
+        <span>by ${t.author || 'unknown'}</span>
+        ${t.version ? `<span>v${t.version}</span>` : ''}
+      </p>
+      <a class="dl" href="${dlURL}" download>Download .overgrowpack</a>
+    </div>
+  </article>`;
+}
+
+function render(list, note) {
+  grid.innerHTML = list.map(cardHTML).join('');
+  status.textContent = note;
+}
+
+async function loadRepo() {
+  const res = await fetch(`https://api.github.com/repos/${REPO}/contents/themes`);
+  if (!res.ok) throw new Error('repo listing failed');
+  const items = await res.json();
+  const packs = items.filter(i => i.name.endsWith('.overgrowpack'));
+  const themes = [];
+  for (const p of packs) {
+    const slug = p.name.replace(/\.overgrowpack$/, '');
+    const dl = p.download_url || `${RAW}/themes/${p.name}`;
+    let meta = null;
+    try {
+      // The pack is a zip; read theme.json out of it in the browser.
+      const bin = await fetch(`${CDN}/themes/${p.name}`).then(r => r.arrayBuffer());
+      const zip = await JSZip.loadAsync(bin);
+      const raw = await zip.file('theme.json').async('string');
+      meta = JSON.parse(raw);
+    } catch (e) { /* preview-only fallback below */ }
+    themes.push({
+      slug, dl,
+      name: meta?.name || slug,
+      en: slug.replace(/(^|-)([a-z])/g, (m,a,b) => (a?' ':'') + b.toUpperCase()),
+      subtitle: meta?.subtitle || '',
+      author: meta?.author || '',
+      version: meta?.version || '',
+      accent: meta?.tokens?.accent || meta?.palette?.accent || '4a7c3f'
+    });
+  }
+  if (!themes.length) throw new Error('no packs found');
+  render(themes, `${themes.length} world${themes.length > 1 ? 's' : ''} · loaded live from the GitHub repo`);
+}
+
+loadRepo().catch(() => {
+  render(
+    FALLBACK.map(t => ({ ...t, dl: `${RAW}/themes/${t.slug}.overgrowpack` })),
+    'Showing the built-in list — the live repo could not be reached just now.'
+  );
+});
+</script>
+
+</body>
+</html>
