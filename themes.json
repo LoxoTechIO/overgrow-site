@@ -11,7 +11,7 @@
       "accent": "35603e",
       "file": "assets/themes/bamboo-rain.overgrowpack",
       "preview": "assets/themes/previews/bamboo-rain.png",
-      "size": 1200
+      "size": 1212
     },
     {
       "slug": "cloud-nap",
@@ -23,7 +23,7 @@
       "accent": "3a6a9e",
       "file": "assets/themes/cloud-nap.overgrowpack",
       "preview": "assets/themes/previews/cloud-nap.png",
-      "size": 1217
+      "size": 1229
     },
     {
       "slug": "dusk-meadow",
@@ -47,7 +47,7 @@
       "accent": "e8862e",
       "file": "assets/themes/ember-crypt.overgrowpack",
       "preview": "assets/themes/previews/ember-crypt.png",
-      "size": 1245
+      "size": 1242
     },
     {
       "slug": "first-snow",
@@ -59,7 +59,7 @@
       "accent": "3a6a96",
       "file": "assets/themes/first-snow.overgrowpack",
       "preview": "assets/themes/previews/first-snow.png",
-      "size": 1228
+      "size": 1240
     },
     {
       "slug": "grand-voyage",
@@ -95,7 +95,7 @@
       "accent": "3f6f35",
       "file": "assets/themes/moss-path.overgrowpack",
       "preview": "assets/themes/previews/moss-path.png",
-      "size": 1240
+      "size": 1251
     },
     {
       "slug": "rain-eaves",
@@ -119,7 +119,7 @@
       "accent": "e8b23c",
       "file": "assets/themes/rift-night.overgrowpack",
       "preview": "assets/themes/previews/rift-night.png",
-      "size": 1245
+      "size": 1254
     },
     {
       "slug": "sakura-night",
@@ -131,7 +131,7 @@
       "accent": "a85a80",
       "file": "assets/themes/sakura-night.overgrowpack",
       "preview": "assets/themes/previews/sakura-night.png",
-      "size": 1174
+      "size": 1188
     }
   ]
 }
