@@ -2,6 +2,30 @@
   "updated": "2026-11-26",
   "themes": [
     {
+      "slug": "bamboo-rain",
+      "name": "竹雨",
+      "en": "Bamboo Rain",
+      "subtitle": "雨天的竹林：竹节从桌沿长出来，湿苔爬上侧壁，雨丝斜着过",
+      "author": "LoxoTechIO",
+      "version": "1.0.0",
+      "accent": "35603e",
+      "file": "assets/themes/bamboo-rain.overgrowpack",
+      "preview": "assets/themes/previews/bamboo-rain.png",
+      "size": 1200
+    },
+    {
+      "slug": "cloud-nap",
+      "name": "云眠",
+      "en": "Cloud Nap",
+      "subtitle": "低云贴着桌沿浮过，絮状的风从边上游走——屏幕上方是高原的天空",
+      "author": "LoxoTechIO",
+      "version": "1.0.0",
+      "accent": "3a6a9e",
+      "file": "assets/themes/cloud-nap.overgrowpack",
+      "preview": "assets/themes/previews/cloud-nap.png",
+      "size": 1217
+    },
+    {
       "slug": "dusk-meadow",
       "name": "暮草",
       "en": "Dusk Meadow",
@@ -12,6 +36,42 @@
       "file": "assets/themes/dusk-meadow.overgrowpack",
       "preview": "assets/themes/previews/dusk-meadow.png",
       "size": 1681
+    },
+    {
+      "slug": "ember-crypt",
+      "name": "烬烛",
+      "en": "Ember Crypt",
+      "subtitle": "地牢边缘的枯草间，烬火聚拢——你盯得越久，火越亮",
+      "author": "LoxoTechIO",
+      "version": "1.0.0",
+      "accent": "e8862e",
+      "file": "assets/themes/ember-crypt.overgrowpack",
+      "preview": "assets/themes/previews/ember-crypt.png",
+      "size": 1245
+    },
+    {
+      "slug": "first-snow",
+      "name": "初雪",
+      "en": "First Snow",
+      "subtitle": "霜从玻璃边缘结晶进来，雪在桌沿堆起——今晚的屏幕是一扇冷窗",
+      "author": "LoxoTechIO",
+      "version": "1.0.0",
+      "accent": "3a6a96",
+      "file": "assets/themes/first-snow.overgrowpack",
+      "preview": "assets/themes/previews/first-snow.png",
+      "size": 1228
+    },
+    {
+      "slug": "grand-voyage",
+      "name": "伟大航路",
+      "en": "Grand Voyage",
+      "subtitle": "甲板上的草随风长，日落金洒在桅杆——望远的理由是海平线",
+      "author": "LoxoTechIO",
+      "version": "1.0.0",
+      "accent": "b06a1e",
+      "file": "assets/themes/grand-voyage.overgrowpack",
+      "preview": "assets/themes/previews/grand-voyage.png",
+      "size": 1241
     },
     {
       "slug": "mint-morning",
@@ -26,6 +86,18 @@
       "size": 1679
     },
     {
+      "slug": "moss-path",
+      "name": "苔径",
+      "en": "Moss Path",
+      "subtitle": "林间小径：苔藓贴着桌沿漫上来，藤蔓垂下，光斑浮在空气里",
+      "author": "LoxoTechIO",
+      "version": "1.0.0",
+      "accent": "3f6f35",
+      "file": "assets/themes/moss-path.overgrowpack",
+      "preview": "assets/themes/previews/moss-path.png",
+      "size": 1240
+    },
+    {
       "slug": "rain-eaves",
       "name": "雨檐",
       "en": "Rain Eaves",
@@ -36,6 +108,30 @@
       "file": "assets/themes/rain-eaves.overgrowpack",
       "preview": "assets/themes/previews/rain-eaves.png",
       "size": 1668
+    },
+    {
+      "slug": "rift-night",
+      "name": "峡谷夜巡",
+      "en": "Rift Night",
+      "subtitle": "野区之夜：金色的符文萤光在草丛里游走，回城前先护眼",
+      "author": "LoxoTechIO",
+      "version": "1.0.0",
+      "accent": "e8b23c",
+      "file": "assets/themes/rift-night.overgrowpack",
+      "preview": "assets/themes/previews/rift-night.png",
+      "size": 1245
+    },
+    {
+      "slug": "sakura-night",
+      "name": "夜樱",
+      "en": "Sakura Night",
+      "subtitle": "夜色里的樱枝压低，花瓣落满桌沿——抬头时花正往下落",
+      "author": "LoxoTechIO",
+      "version": "1.0.0",
+      "accent": "a85a80",
+      "file": "assets/themes/sakura-night.overgrowpack",
+      "preview": "assets/themes/previews/sakura-night.png",
+      "size": 1174
     }
   ]
 }

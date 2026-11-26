@@ -188,26 +188,75 @@
           <label for="f-done-copy">Rest-complete line</label>
           <input type="text" id="f-done-copy" value="草退了，护眼园 +1 朵">
         </div>
-        <div class="field">
-          <label for="f-horizon">Rest-screen horizon</label>
-          <select id="f-horizon">
-            <option value="mountain" selected>mountain</option>
-            <option value="plain">plain</option>
-          </select>
-          <p class="hint">The app currently ships the mountain horizon; more silhouettes may arrive later.</p>
-        </div>
         <div class="row2">
           <div class="field">
-            <label for="f-ritual-duration">Ritual duration (s)</label>
-            <input type="number" id="f-ritual-duration" value="2.4" min="1" max="6" step="0.2">
+            <label for="f-horizon">Rest-screen horizon</label>
+            <select id="f-horizon">
+              <option value="mountain" selected>mountain 山影</option>
+              <option value="field">field 平野 / 海平线</option>
+              <option value="none">none</option>
+            </select>
           </div>
           <div class="field">
             <label for="f-rest-ambient">Rest ambient</label>
             <select id="f-rest-ambient">
-              <option value="petal" selected>petal</option>
+              <option value="petal" selected>petal 花瓣</option>
+              <option value="snow">snow 雪</option>
+              <option value="leaf">leaf 落叶</option>
+              <option value="pollen">pollen 光尘</option>
+              <option value="firefly">firefly 萤火</option>
               <option value="none">none</option>
             </select>
           </div>
+        </div>
+        <div class="field">
+          <label for="f-ritual-duration">Ritual duration (s)</label>
+          <input type="number" id="f-ritual-duration" value="2.4" min="1" max="6" step="0.2">
+        </div>
+      </div>
+
+      <div class="group">
+        <h3>Edge growth (what actually grows on your desktop)</h3>
+        <div class="row2">
+          <div class="field">
+            <label for="f-element">Edge element</label>
+            <select id="f-element">
+              <option value="blade" selected>blade 草丛</option>
+              <option value="bamboo">bamboo 竹</option>
+              <option value="vine">vine 藤</option>
+              <option value="moss">moss 苔</option>
+              <option value="sakura">sakura 樱枝</option>
+              <option value="frost">frost 霜</option>
+              <option value="cloudWisp">cloudWisp 低云</option>
+              <option value="paw">paw 爪垫</option>
+              <option value="firefly">firefly 萤火</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-pile">Ground pile</label>
+            <select id="f-pile">
+              <option value="grassTuft" selected>grassTuft 草垫</option>
+              <option value="snow">snow 积雪</option>
+              <option value="mossCushion">mossCushion 苔垫</option>
+              <option value="wetMoss">wetMoss 湿苔</option>
+              <option value="petalCarpet">petalCarpet 落花</option>
+              <option value="cloudPuff">cloudPuff 云絮</option>
+              <option value="pawPrint">pawPrint 爪印</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-edge-ambient">Air particles</label>
+          <select id="f-edge-ambient">
+            <option value="firefly" selected>firefly 萤火</option>
+            <option value="snow">snow 雪</option>
+            <option value="rain">rain 雨</option>
+            <option value="petal">petal 花瓣</option>
+            <option value="leaf">leaf 落叶</option>
+            <option value="dandelion">dandelion 蒲公英絮</option>
+            <option value="pollen">pollen 光尘</option>
+          </select>
+          <p class="hint">Frost and clouds aren't plants — pair them with a matching pile (snow, cloudPuff) for a coherent scene.</p>
         </div>
       </div>
 
@@ -287,7 +336,10 @@ function buildJSON() {
     requires: ['slot', 'ritual', 'rest.scene', 'menuBar', 'tokens'],
     budget: { maxActors: 2, maxAssetMB: 8 },
     layers: [
-      { type: 'slot', slot: 'edge', element: 'blade', pile: 'grassTuft', ambient: 'firefly' },
+      { type: 'slot', slot: 'edge',
+        element: $('f-element').value,
+        pile: $('f-pile').value,
+        ambient: $('f-edge-ambient').value },
       { type: 'vignette', strength: 0.45 }
     ],
     actors: [], motions: [], assets: [],
@@ -427,8 +479,10 @@ $('file-import').addEventListener('change', async e => {
     text = await f.text();
   }
   const t = JSON.parse(text);
+  const slot = (t.layers || []).find(l => l.type === 'slot') || {};
   const put = (id, v) => { if (v != null) $(id).value = v; };
   put('f-name', t.name); put('f-id', t.id); put('f-subtitle', t.subtitle); put('f-author', t.author);
+  put('f-element', slot.element); put('f-pile', slot.pile); put('f-edge-ambient', slot.ambient);
   put('f-accent', t.tokens?.accent); put('f-vignette', t.palette?.vignette);
   put('f-sky-top', t.rest?.backdrop?.[0]); put('f-sky-bottom', t.rest?.backdrop?.[1]);
   put('f-rit-a', t.ritual?.colors?.[0]); put('f-rit-b', t.ritual?.colors?.[1]);
