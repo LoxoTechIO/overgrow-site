@@ -210,6 +210,13 @@
           </div>
         </div>
         <div class="field">
+          <label>Buddy mode</label>
+          <div class="row2">
+            <label style="font-weight:normal"><input type="radio" name="buddy-mode" id="f-buddy-mode-builtin" value="builtin" checked> 内置字形（选一个）</label>
+            <label style="font-weight:normal"><input type="radio" name="buddy-mode" id="f-buddy-mode-custom" value="custom"> 自定义角色（上传图片）</label>
+          </div>
+        </div>
+        <div class="field" id="buddy-builtin-row">
           <label for="f-buddy">Rest buddy (the little companion)</label>
           <select id="f-buddy">
             <option value="" selected>none 无搭子</option>
@@ -224,6 +231,12 @@
             <option value="cat.sleep">cat.sleep 猫</option>
             <option value="droid.idle">droid.idle 机器人</option>
           </select>
+        </div>
+        <div class="field" id="buddy-custom-row" style="display:none">
+          <label for="f-buddy-files">Buddy frames（PNG，1–4 张；多张按 6fps 循环播放）</label>
+          <input type="file" id="f-buddy-files" accept="image/png,image/*" multiple>
+          <div id="buddy-thumbs" class="row2" style="margin-top:8px"></div>
+          <p class="hint">第一张是待机帧。透明背景 PNG 效果最好；单张 ≤ 1.5MB、总共 ≤ 6MB（引擎上限 8MB）。</p>
         </div>
         <div class="field">
           <label for="f-ritual-duration">Ritual duration (s)</label>
@@ -319,6 +332,8 @@
             <text id="p-ritual-text" x="320" y="318" text-anchor="middle" font-family="Georgia, serif"
                   font-size="17" fill="#3a3a30"></text>
           </g>
+          <image id="p-buddy" x="0" y="0" height="0" width="0" opacity="0.95"
+                 style="display:none"></image>
         </svg>
         <p class="hint" style="margin-top:8px">
           Approximate preview of the rest screen (sky, horizon, grass) with the ritual line overlaid —
@@ -338,13 +353,89 @@
 <script>
 const $ = id => document.getElementById(id);
 
+// ---------- custom buddy frames ----------
+// 上传的 PNG 直接打进包里（assets/ + actors + rest.actor），引擎按素材演员渲染。
+const buddyFrames = []; // { name, bytes: ArrayBuffer, w, h, url }
+function buddyMode() {
+  return $('f-buddy-mode-custom').checked ? 'custom' : 'builtin';
+}
+function refreshBuddyUI() {
+  const custom = buddyMode() === 'custom';
+  $('buddy-builtin-row').style.display = custom ? 'none' : '';
+  $('buddy-custom-row').style.display = custom ? '' : 'none';
+  updatePreview();
+}
+for (const r of document.querySelectorAll('input[name=buddy-mode]'))
+  r.addEventListener('change', refreshBuddyUI);
+
+$('f-buddy-files').addEventListener('change', async e => {
+  const files = [...e.target.files].slice(0, 4 - buddyFrames.length);
+  for (const f of files) {
+    if (f.size > 1.5 * 1024 * 1024) { alert(`「${f.name}」超过 1.5MB，请压缩后再传`); continue; }
+    const bytes = await f.arrayBuffer();
+    const url = URL.createObjectURL(new Blob([bytes], { type: f.type }));
+    const dim = await new Promise(res => {
+      const img = new Image(); img.onload = () => res({ w: img.naturalWidth, h: img.naturalHeight });
+      img.onerror = () => res(null); img.src = url;
+    });
+    if (!dim) { alert(`「${f.name}」不是可读的图片`); URL.revokeObjectURL(url); continue; }
+    buddyFrames.push({ name: f.name, bytes, w: dim.w, h: dim.h, url });
+  }
+  e.target.value = '';
+  renderBuddyThumbs();
+  updatePreview();
+});
+
+function renderBuddyThumbs() {
+  const wrap = $('buddy-thumbs');
+  wrap.innerHTML = '';
+  buddyFrames.forEach((fr, i) => {
+    const card = document.createElement('div');
+    card.style.cssText = 'text-align:center;position:relative';
+    card.innerHTML =
+      `<img src="${fr.url}" alt="frame ${i + 1}" style="max-height:72px;background:rgba(0,0,0,.06);border-radius:6px">
+       <div style="font-size:11px">帧 ${i + 1}${i === 0 ? ' · 待机' : ''} · ${fr.w}×${fr.h}</div>`;
+    const del = document.createElement('button');
+    del.textContent = '×'; del.type = 'button';
+    del.style.cssText = 'position:absolute;top:-6px;right:-6px;border:none;border-radius:50%;width:18px;height:18px;cursor:pointer';
+    del.addEventListener('click', () => {
+      URL.revokeObjectURL(fr.url);
+      buddyFrames.splice(i, 1);
+      renderBuddyThumbs(); updatePreview();
+    });
+    card.appendChild(del);
+    wrap.appendChild(card);
+  });
+}
+
+// 导出用的帧序列：写进 assets + actors + rest.actor
+function buddyExport() {
+  if (buddyMode() !== 'custom' || !buddyFrames.length) return null;
+  return {
+    actorId: 'rest.buddy',
+    assets: buddyFrames.map((fr, i) => ({
+      id: `buddy.f${i + 1}`, file: `assets/buddy-${i + 1}.png`,
+      size: { x: fr.w, y: fr.h }, anchor: { x: 0.5, y: 1 }
+    })),
+    actor: {
+      id: 'rest.buddy',
+      poses: [{ id: 'idle', frames: buddyFrames.map((_, i) => `buddy.f${i + 1}`),
+                fps: 6, loop: true }],
+      anchor: 'bottomCenter', height: 0.22,
+      at: { x: 0.82, y: 0.94 }
+    },
+    files: buddyFrames.map((fr, i) => ({ path: `assets/buddy-${i + 1}.png`, bytes: fr.bytes }))
+  };
+}
+
 // ---------- state ----------
 function hexOf(t, fallback) {
   const v = ($(t).value || '').trim().replace(/^#/, '').toLowerCase();
   return /^[0-9a-f]{6}$/.test(v) ? v : fallback;
 }
 function buildJSON() {
-  return {
+  const buddy = buddyExport();
+  const j = {
     format: 3,
     id: $('f-id').value.trim() || 'local.theme',
     name: $('f-name').value.trim() || '未命名',
@@ -379,12 +470,19 @@ function buildJSON() {
       ambient: $('f-rest-ambient').value,
       backdrop: [hexOf('f-sky-top', '8a7a9e'), hexOf('f-sky-bottom', 'f0d9b5')],
       horizon: $('f-horizon').value,
-      buddy: $('f-buddy').value || undefined,
+      buddy: buddy ? undefined : ($('f-buddy').value || undefined),
+      actor: buddy ? buddy.actorId : undefined,
+      actorHeight: buddy ? 0.22 : undefined,
       focusCopy: $('f-focus-copy').value.trim(),
       doneCopy: $('f-done-copy').value.trim()
     },
     accessibility: { reducedMotion: 'static' }
   };
+  if (buddy) {
+    j.assets.push(...buddy.assets);
+    j.actors.push(buddy.actor);
+  }
+  return j;
 }
 
 // ---------- preview ----------
@@ -450,6 +548,22 @@ function updatePreview() {
   $('p-ritual-text').textContent = t.ritual.copy || '';
   $('p-ritual-text').setAttribute('fill', shade(t.ritual.colors[0], 0.55));
 
+  // 自定义搭子：右下角贴第一帧（按包内 0.22 屏高等比换算）
+  const pb = $('p-buddy');
+  if (buddyMode() === 'custom' && buddyFrames.length) {
+    const fr = buddyFrames[0];
+    const h = 360 * 0.22;
+    const w = h * fr.w / fr.h;
+    pb.setAttribute('x', 640 - 24 - w);
+    pb.setAttribute('y', 360 - 12 - h);
+    pb.setAttribute('width', w);
+    pb.setAttribute('height', h);
+    pb.setAttribute('href', fr.url);
+    pb.style.display = '';
+  } else {
+    pb.style.display = 'none';
+  }
+
   // contrast warning (accent on light UI, like the app's validator)
   const L = luminance(t.tokens.accent);
   $('warn').textContent =
@@ -474,8 +588,10 @@ $('btn-json').addEventListener('click', () => {
   download(new Blob([JSON.stringify(buildJSON(), null, 2)], { type: 'application/json' }), 'theme.json');
 });
 $('btn-export').addEventListener('click', async () => {
+  const buddy = buddyExport();
   const zip = new JSZip();
   zip.file('theme.json', JSON.stringify(buildJSON(), null, 2));
+  for (const f of (buddy?.files || [])) zip.file(f.path, f.bytes);
   zip.file('README.md',
 `# ${buildJSON().name}
 
@@ -491,10 +607,10 @@ $('btn-import').addEventListener('click', () => $('file-import').click());
 $('file-import').addEventListener('change', async e => {
   const f = e.target.files[0];
   if (!f) return;
-  let text;
+  let text, importedZip = null;
   if (f.name.endsWith('.overgrowpack')) {
-    const zip = await JSZip.loadAsync(await f.arrayBuffer());
-    text = await zip.file('theme.json').async('string');
+    importedZip = await JSZip.loadAsync(await f.arrayBuffer());
+    text = await importedZip.file('theme.json').async('string');
   } else {
     text = await f.text();
   }
@@ -511,7 +627,34 @@ $('file-import').addEventListener('change', async e => {
   if (t.ritual?.duration) put('f-ritual-duration', t.ritual.duration);
   if (t.rest?.horizon) put('f-horizon', t.rest.horizon);
   if (t.rest?.ambient) put('f-rest-ambient', t.rest.ambient);
-  if (t.rest?.buddy) put('f-buddy', t.rest.buddy);
+  // 搭子：素材演员 → 恢复上传帧；内置字形 → 下拉框
+  for (const fr of buddyFrames) URL.revokeObjectURL(fr.url);
+  buddyFrames.length = 0;
+  if (t.rest?.actor && importedZip) {
+    const actor = (t.actors || []).find(a => a.id === t.rest.actor);
+    const ids = actor?.poses?.flatMap(p => p.frames) || (actor?.asset ? [actor.asset] : []);
+    const assetById = Object.fromEntries((t.assets || []).map(a => [a.id, a]));
+    for (const id of ids.slice(0, 4)) {
+      const a = assetById[id];
+      const entry = a && importedZip.file(a.file);
+      if (!entry) continue;
+      const bytes = await entry.async('arraybuffer');
+      const url = URL.createObjectURL(new Blob([bytes], { type: 'image/png' }));
+      const dim = await new Promise(res => {
+        const img = new Image(); img.onload = () => res({ w: img.naturalWidth, h: img.naturalHeight });
+        img.onerror = () => res({ w: a.size?.x || 256, h: a.size?.y || 256 }); img.src = url;
+      });
+      buddyFrames.push({ name: a.file, bytes, w: dim.w, h: dim.h, url });
+    }
+    if (buddyFrames.length) {
+      $('f-buddy-mode-custom').checked = true;
+      renderBuddyThumbs();
+    }
+  } else if (t.rest?.buddy) {
+    put('f-buddy', t.rest.buddy);
+    $('f-buddy-mode-builtin').checked = true;
+  }
+  refreshBuddyUI();
   if (t.menuBar?.symbol) {
     const sel = $('f-symbol');
     sel.value = t.menuBar.symbol;
