@@ -1,0 +1,41 @@
+{
+  "updated": "2026-11-26",
+  "themes": [
+    {
+      "slug": "dusk-meadow",
+      "name": "暮草",
+      "en": "Dusk Meadow",
+      "subtitle": "日落前的草尖被镀了一层金，风一过就低头",
+      "author": "LoxoTechIO",
+      "version": "0.1.0",
+      "accent": "9a5b22",
+      "file": "assets/themes/dusk-meadow.overgrowpack",
+      "preview": "assets/themes/previews/dusk-meadow.png",
+      "size": 1681
+    },
+    {
+      "slug": "mint-morning",
+      "name": "薄荷晨",
+      "en": "Mint Morning",
+      "subtitle": "清晨的凉意，薄荷色的光从边缘渗进来",
+      "author": "LoxoTechIO",
+      "version": "0.1.0",
+      "accent": "2e7a55",
+      "file": "assets/themes/mint-morning.overgrowpack",
+      "preview": "assets/themes/previews/mint-morning.png",
+      "size": 1679
+    },
+    {
+      "slug": "rain-eaves",
+      "name": "雨檐",
+      "en": "Rain Eaves",
+      "subtitle": "檐下听雨，草色被洗得发青",
+      "author": "LoxoTechIO",
+      "version": "0.1.0",
+      "accent": "3f6f8a",
+      "file": "assets/themes/rain-eaves.overgrowpack",
+      "preview": "assets/themes/previews/rain-eaves.png",
+      "size": 1668
+    }
+  ]
+}

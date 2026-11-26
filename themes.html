@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Theme Gallery — OverGrow</title>
 <meta name="description" content="Browse community-made OverGrow worlds. Download a .overgrowpack, double-click it, and your desktop grows a new sky.">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
   :root {
     --paper: #f6f4ee; --card: #fffdf8; --ink: #2c2a24; --soft: #6f6a5e;
@@ -127,30 +126,19 @@
 </div>
 
 <script>
-const REPO = 'LoxoTechIO/OverGrow-Theme';
-const BRANCH = 'main';
-const RAW = `https://raw.githubusercontent.com/${REPO}/${BRANCH}`;
-const CDN = `https://cdn.jsdelivr.net/gh/${REPO}@${BRANCH}`;
-
-// Fallback shown if the repo API can't be reached.
-const FALLBACK = [
-  { slug: 'dusk-meadow',  name: '暮草',  en: 'Dusk Meadow',   author: 'LoxoTechIO',
-    subtitle: '日落前的草尖被镀了一层金，风一过就低头', accent: '9a5b22' },
-  { slug: 'rain-eaves',   name: '雨檐',  en: 'Rain Eaves',    author: 'LoxoTechIO',
-    subtitle: '檐下听雨，草色被洗得发青', accent: '3f6f8a' },
-  { slug: 'mint-morning', name: '薄荷晨', en: 'Mint Morning',  author: 'LoxoTechIO',
-    subtitle: '清晨的凉意，薄荷色的光从边缘渗进来', accent: '2e7a55' }
-];
-
+// Theme data is built by Scripts/build_themes.py (run locally or by the
+// daily GitHub Action) and served from this same domain — no cross-origin
+// fetches, so downloads and preview images work everywhere.
 const grid = document.getElementById('grid');
 const status = document.getElementById('status');
 
-function cardHTML(t, dlURL) {
-  const preview = `${RAW}/themes/previews/${t.slug}.png`;
+function cardHTML(t) {
+  const img = t.preview
+    ? `<img src="${t.preview}" alt="${t.name}" loading="lazy" onerror="this.classList.add('missing')">`
+    : `<img class="missing" alt="">`;
   return `
   <article class="theme">
-    <img src="${preview}" alt="${t.name}" loading="lazy"
-         onerror="this.classList.add('missing')">
+    ${img}
     <div class="body">
       <h3>${t.name}${t.en ? ' · ' + t.en : ''}</h3>
       <p class="sub">${t.subtitle || ''}</p>
@@ -158,54 +146,25 @@ function cardHTML(t, dlURL) {
         <span class="dot" style="background:#${(t.accent || '4a7c3f').replace('#','')}"></span>
         <span>by ${t.author || 'unknown'}</span>
         ${t.version ? `<span>v${t.version}</span>` : ''}
+        ${t.size ? `<span>${(t.size / 1024).toFixed(0)} KB</span>` : ''}
       </p>
-      <a class="dl" href="${dlURL}" download>Download .overgrowpack</a>
+      <a class="dl" href="${t.file}" download>Download .overgrowpack</a>
     </div>
   </article>`;
 }
 
-function render(list, note) {
-  grid.innerHTML = list.map(cardHTML).join('');
-  status.textContent = note;
-}
-
-async function loadRepo() {
-  const res = await fetch(`https://api.github.com/repos/${REPO}/contents/themes`);
-  if (!res.ok) throw new Error('repo listing failed');
-  const items = await res.json();
-  const packs = items.filter(i => i.name.endsWith('.overgrowpack'));
-  const themes = [];
-  for (const p of packs) {
-    const slug = p.name.replace(/\.overgrowpack$/, '');
-    const dl = p.download_url || `${RAW}/themes/${p.name}`;
-    let meta = null;
-    try {
-      // The pack is a zip; read theme.json out of it in the browser.
-      const bin = await fetch(`${CDN}/themes/${p.name}`).then(r => r.arrayBuffer());
-      const zip = await JSZip.loadAsync(bin);
-      const raw = await zip.file('theme.json').async('string');
-      meta = JSON.parse(raw);
-    } catch (e) { /* preview-only fallback below */ }
-    themes.push({
-      slug, dl,
-      name: meta?.name || slug,
-      en: slug.replace(/(^|-)([a-z])/g, (m,a,b) => (a?' ':'') + b.toUpperCase()),
-      subtitle: meta?.subtitle || '',
-      author: meta?.author || '',
-      version: meta?.version || '',
-      accent: meta?.tokens?.accent || meta?.palette?.accent || '4a7c3f'
-    });
-  }
-  if (!themes.length) throw new Error('no packs found');
-  render(themes, `${themes.length} world${themes.length > 1 ? 's' : ''} · loaded live from the GitHub repo`);
-}
-
-loadRepo().catch(() => {
-  render(
-    FALLBACK.map(t => ({ ...t, dl: `${RAW}/themes/${t.slug}.overgrowpack` })),
-    'Showing the built-in list — the live repo could not be reached just now.'
-  );
-});
+fetch('themes.json?ts=' + Date.now())
+  .then(r => {
+    if (!r.ok) throw new Error(r.status);
+    return r.json();
+  })
+  .then(data => {
+    grid.innerHTML = data.themes.map(cardHTML).join('');
+    status.textContent = `${data.themes.length} worlds · synced ${data.updated}`;
+  })
+  .catch(() => {
+    status.textContent = 'Theme list is temporarily unavailable — please refresh in a moment.';
+  });
 </script>
 
 </body>
